@@ -37,9 +37,11 @@ function Rearm () {
 }
 function StatusCheck () {
     SelfStatus = true
-    if (IgniterStatus) {
+    if (pins.digitalReadPin(DigitalPin.P2) == 1) {
+        IgniterStatus = true
         radio.sendNumber(21)
     } else {
+        IgniterStatus = false
         radio.sendNumber(22)
     }
     if (pins.digitalReadPin(DigitalPin.P1) == 1) {
@@ -163,11 +165,6 @@ basic.forever(function () {
     if (pins.digitalReadPin(DigitalPin.P5) == 0) {
         strip.showColor(neopixel.colors(NeoPixelColors.Red))
         pins.digitalWritePin(DigitalPin.P14, 1)
-        if (pins.digitalReadPin(DigitalPin.P2) == 1) {
-            IgniterStatus = true
-        } else {
-            IgniterStatus = false
-        }
         basic.pause(200)
         pins.digitalWritePin(DigitalPin.P14, 0)
     }
