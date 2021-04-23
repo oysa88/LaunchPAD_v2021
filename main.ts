@@ -1,6 +1,8 @@
 radio.onReceivedNumber(function (receivedNumber) {
-    LinkStatus = true
-    sistSettAktiv = input.runningTime()
+    if (receivedNumber == 11) {
+        LinkStatus = true
+        sistSettAktiv = input.runningTime()
+    }
     if (receivedNumber == 42) {
         Oppskytning = true
     }
@@ -37,7 +39,7 @@ function Rearm () {
 }
 function StatusCheck () {
     SelfStatus = true
-    if (pins.digitalReadPin(DigitalPin.P2) == 1) {
+    if (IgniterCheck == 1) {
         IgniterStatus = true
         radio.sendNumber(21)
     } else {
@@ -70,6 +72,7 @@ function StatusCheck () {
             # . . . #
             `)
     }
+    NeoPixels()
 }
 function NeoPixels () {
     if (SelfStatus) {
@@ -92,6 +95,7 @@ function NeoPixels () {
     } else {
         strip.setPixelColor(3, neopixel.colors(NeoPixelColors.Red))
     }
+    strip.show()
 }
 function Launch () {
     if (Klar) {
@@ -144,11 +148,13 @@ function Initialize () {
         # . . . #
         # . . . #
         `)
+    strip.showColor(neopixel.colors(NeoPixelColors.Red))
     basic.pause(200)
 }
 let Klar = false
 let ArmStatus = false
 let IgniterStatus = false
+let IgniterCheck = 0
 let SelfStatus = false
 let Oppskytning = false
 let sistSettAktiv = 0
@@ -165,12 +171,14 @@ basic.forever(function () {
     if (pins.digitalReadPin(DigitalPin.P5) == 0) {
         strip.showColor(neopixel.colors(NeoPixelColors.Red))
         pins.digitalWritePin(DigitalPin.P14, 1)
+        IgniterCheck = pins.digitalReadPin(DigitalPin.P2)
         basic.pause(200)
         pins.digitalWritePin(DigitalPin.P14, 0)
     }
     if (Oppskytning) {
         Launch()
     }
+    basic.pause(100)
 })
 control.inBackground(function () {
     while (true) {
@@ -178,6 +186,6 @@ control.inBackground(function () {
         if (input.runningTime() - sistSettAktiv > 3 * oppdateringsfrekvens) {
             LinkStatus = false
         }
+        basic.pause(oppdateringsfrekvens)
     }
-    basic.pause(oppdateringsfrekvens)
 })
