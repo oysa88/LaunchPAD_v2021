@@ -116,6 +116,7 @@ function Initialize () {
     SelfStatus = false
     LinkStatus = false
     IgniterStatus = false
+    IgniterCheck = 0
     ArmStatus = false
     Oppskytning = false
     Klar = false
